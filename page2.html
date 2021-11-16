@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>page2</title>
+    <link rel="stylesheet" href="https://fontawesome.com/v4.7/icon/check">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200&family=Roboto:wght@100;400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="page2.css">
+</head>
+
+<body>
+    <div class="trash_div">
+        <i class="fa fa-trash" id="outside_trash"></i>
+    </div>
+    <div id="container">
+
+    </div>
+    <script>
+        const params = new URLSearchParams(location.search);
+        var users_id = params.get("id");
+        function post() {
+             fetch("https://jsonplaceholder.typicode.com/posts")
+                .then(res => res.json())
+                .then(data => user_details(data))
+        }
+        post();
+        function user_details(data) {
+            for (let j = 0; j < data.length; j++) {  //100
+                var posts = data[j];
+                if (posts.userId == users_id) {
+                    var posts_title = posts.title;
+                    var posts_body = posts.body;
+                    create_card(posts_title, posts_body, posts.id,users_id);
+                }
+            }
+        }
+
+       async function create_card(posts_title, posts_body, posts_id,users_id) {
+             console.log(posts_id,"for card creation");
+            let wrapper = document.getElementById('container');
+            let box = document.createElement('label');
+            box.id = "box"+posts_id;
+            wrapper.appendChild(box);
+            console.log("box created");
+
+            let checkbox = document.createElement('input');
+            checkbox.setAttribute("type", "checkbox");
+            checkbox.className = posts_id;
+            box.appendChild(checkbox);
+            console.log("checkbox created");
+
+            checkbox.addEventListener('click', function () {
+                outside_trash = document.getElementById('outside_trash');
+                outside_trash.style.visibility = "visible";
+            });
+            let properties = document.createElement('div');
+            properties.setAttribute("class", "properties");
+            properties.id = posts_id;
+            box.appendChild(properties);
+
+            let c1 = document.createElement('div');
+            properties.appendChild(c1);
+            c1.className = "c1";
+            let checkbox2 = document.createElement("div");
+            checkbox2.className = "checkbox2";
+            c1.appendChild(checkbox2);
+            let span = document.createElement("span");
+            span.className = "span";
+            checkbox2.appendChild(span);
+            let check_icon = document.createElement("i");
+            check_icon.className = "fa fa-check";
+            span.appendChild(check_icon);
+
+            let icon = document.createElement("div");
+            icon.className = "icon";
+            c1.appendChild(icon);
+
+            let trash = document.createElement('i');
+            trash.setAttribute("class", "fa fa-trash");
+            trash.classList.add("trash_icon");
+            trash.addEventListener('click', function () {
+                alert("Are you sure?");
+                box.style.display = "none";
+                 //event.stopImmediatePropagation();
+                 //outside_trash.style.visibility = "hidden";
+
+            })
+            icon.appendChild(trash);
+            let edit = document.createElement('i');
+            edit.setAttribute("class", "fa fa-edit");
+            icon.appendChild(edit);
+            let content = document.createElement('div');
+            content.className = "content";
+           // content.id="contentId"
+            properties.appendChild(content);
+
+            let title = document.createElement('div');
+            title.className = "title"
+            content.appendChild(title);
+            title.innerHTML = posts_title;
+            console.log("title created");
+
+            let body = document.createElement('div');
+            body.className = "body"
+            content.appendChild(body);
+            body.innerHTML = "<b>body : </b>" + posts_body;
+            console.log("body created");
+
+            let comment = document.createElement('div');
+            comment.className = "comment"
+            comment.id="commentId"
+            content.appendChild(comment);
+            comment.innerHTML = "<b>comment</b>";
+            console.log("comments created");
+            for(let com=1;com<=3;com++){
+                let name = document.createElement('div');
+                        name.id = "n"+ com + posts_id;
+                        comment.appendChild(name);
+
+                        let Body = document.createElement('div');
+                        Body.id = "b" +com+ posts_id;
+                        comment.appendChild(Body);
+
+                        let email = document.createElement('div');
+                        email.id = "e"+com+ posts_id;
+                        comment.appendChild(email);
+                        comments(posts_id);
+            }
+        }
+        function comments(posts_id) {
+            console.log("comments function")
+            fetch("https://jsonplaceholder.typicode.com/comments")
+                .then(com => com.json())
+                .then(com_data => com_details(com_data, posts_id))
+                console.log("fetched data");
+        }
+
+        function com_details(com_data, posts_id) {
+            // comment=document.getElementById('commentId');
+            var count = 0;
+            console.log(com_data.length,"length");
+            for (let k = 0; k < com_data.length; k++) {
+               // console.log(k);
+                 console.log(posts_id,"posts id inside comments");
+                let comments = com_data[k];
+                if (comments.postId == posts_id && count<3) {
+                    console.log(comments.postId + "==" + posts_id)
+                    count++;
+                    var name1 = comments.name;
+                    var Body1 = comments.body;
+                    var email1 = comments.email;
+
+                        document.getElementById("n" +count+ posts_id).innerHTML = "<b>name : </b>" + name1;
+                         document.getElementById("b" +count+ posts_id).innerHTML = "<b>Body : </b>" + Body1;
+                         document.getElementById("e" +count+ posts_id).innerHTML = "<b>email : </b>" + email1;
+                }
+                // else{
+                //     break;
+                // }
+            }
+        }
+        outside_trash = document.getElementById('outside_trash');
+        outside_trash.addEventListener('click', displaynone);
+
+        function displaynone() {
+            var markedCheckbox = document.querySelectorAll('input[type="checkbox"]:checked');
+            if (markedCheckbox.length == 0) {
+               // alert("no post is selected");
+               outside_trash.style.visibility = "hidden";
+            }
+        else{
+            var r = alert("Are you sure ?");
+            for (var checkbox of markedCheckbox) {
+                    let tobenone = checkbox.getAttribute("class");
+                    let div = document.getElementById("box"+tobenone);
+                    div.style.display="none";
+                    // event.stopImmediatePropagation();
+                    //outside_trash.style.visibility = "hidden";
+                }
+        }
+        }
+
+    </script>
+</body>
+
+</html>

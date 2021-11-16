@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>page1</title>
+    <style>
+      table,tr,td,th{
+          border:1px solid black;
+          padding:10px;
+      }
+       #table{
+          border-collapse: collapse;
+          margin: auto;
+      }
+      .table_row:hover{
+        background-color: rgb(230, 222, 222);
+        cursor: pointer;
+      }
+    </style>
+</head>
+<body>
+    <table id="table" onclick=post()>
+        <tr id="tr">
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone_no</th>
+            <th>website</th>
+            <th>comany</th>
+        </tr>
+    </table>
+    <label>
+
+    </label>
+   <script>
+       fetch(' https://jsonplaceholder.typicode.com/users')
+       .then(result=>result.json())
+       .then(json=>show((json)))
+
+       function show(details){
+           let table=document.getElementById('table');
+           for(let i=0;i<10;i++)
+           {
+               
+               let obj=details[i];
+               let id=i+1;
+              // console.log(obj);
+               let row=document.createElement('tr');
+               row.className="table_row"
+               let Name=document.createElement('td');
+               let Email=document.createElement('td');
+               let Phone_no=document.createElement('td');
+               let Website=document.createElement('td');
+               let Company=document.createElement('td');
+
+               Name.innerText=obj.name;
+               Email.innerHTML=obj.email;
+               Phone_no.innerHTML=obj.phone;
+               Website.innerHTML=obj.website;
+               Company.innerHTML=obj.company.name;
+
+               row.appendChild(Name);
+               row.appendChild(Email);
+               row.appendChild(Phone_no);
+               row.appendChild(Website);
+               row.appendChild(Company);
+
+               table.appendChild(row);
+               row.addEventListener('click',function(){
+                   document.location.href="./page2.html?id="+id
+               })
+           }
+       }
+   </script>
+</body>
+</html>
